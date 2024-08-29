@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+  background-color: #0d0d0d;
+  color: #f0f0f0;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-right: 1px solid #333;
+}
+
+.planning {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
