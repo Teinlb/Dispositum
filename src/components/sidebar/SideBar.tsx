@@ -1,44 +1,64 @@
 import React from 'react';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import './sidebar.css';
 
-const SideBar: React.FC = () => {
-  const tasks = [
-    "Task 1",
-    "Task 2",
-    "Task 3",
-    "Task 4"
-  ];
+interface SideBarProps {
+  tasks: string[];
+  subtasks: string[];
+}
 
-  const sublistItems = [
-    "Subtask 1",
-    "Subtask 2",
-    "Subtask 3"
-  ];
-
+const SideBar: React.FC<SideBarProps> = ({ tasks, subtasks }) => {
   return (
     <div className="sidebar">
       <h2>Tasks</h2>
-      <ul>
-        {tasks.map((task, index) => (
-          <li key={index} className="task">
-            {task}
-          </li>
-        ))}
-      </ul>
+      <Droppable droppableId="sidebarTasks">
+        {(provided) => (
+          <ul ref={provided.innerRef} {...provided.droppableProps}>
+            {tasks.map((task, index) => (
+              <Draggable key={task} draggableId={task} index={index}>
+                {(provided) => (
+                  <li
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="task"
+                  >
+                    {task}
+                  </li>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </ul>
+        )}
+      </Droppable>
 
       <hr />
 
       <div className="sublist">
         <div className="sublist-header">Subtasks</div>
-        <ul>
-          {sublistItems.map((item, index) => (
-            <li key={index} className="sublist-item">
-              {item}
-            </li>
-          ))}
-        </ul>
+        <Droppable droppableId="sidebarSubtasks">
+          {(provided) => (
+            <ul ref={provided.innerRef} {...provided.droppableProps}>
+              {subtasks.map((item, index) => (
+                <Draggable key={item} draggableId={item} index={index}>
+                  {(provided) => (
+                    <li
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="sublist-item"
+                    >
+                      {item}
+                    </li>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </ul>
+          )}
+        </Droppable>
       </div>
-      
     </div>
   );
 };
