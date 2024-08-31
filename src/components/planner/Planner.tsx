@@ -1,21 +1,21 @@
-import React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+import React, { useState } from 'react';
 import './planner.css';
 
-interface PlannerProps {
-  plannerTasks: { [key: string]: string[] };
-}
+const Planner: React.FC = () => {
+  const [currentWeek, setCurrentWeek] = useState<number>(35);
 
-const Planner: React.FC<PlannerProps> = ({ plannerTasks }) => {
+  const nextWeek = () => setCurrentWeek(currentWeek + 1);
+  const previousWeek = () => setCurrentWeek(currentWeek - 1);
+
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   return (
     <div className="planning">
       <div className="header">
         <div className="week-selector">
-          <button className="material-symbols-outlined">chevron_left</button>
-          <h2>Week 35</h2>
-          <button className="material-symbols-outlined">chevron_right</button>
+          <button onClick={previousWeek} className="material-symbols-outlined">chevron_left</button>
+          <h2>Week {currentWeek}</h2>
+          <button onClick={nextWeek} className="material-symbols-outlined">chevron_right</button>
         </div>
         <div className="account-settings">
           <span>Username</span>
@@ -27,27 +27,7 @@ const Planner: React.FC<PlannerProps> = ({ plannerTasks }) => {
         {days.map((day, index) => (
           <div key={index} className="week-column">
             <h3>{day}</h3>
-            <Droppable droppableId={day}>
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps} className="task-list">
-                  {plannerTasks[day].map((task, index) => (
-                    <Draggable key={task} draggableId={task} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="task"
-                        >
-                          {task}
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+            <div className="task">Sample Task</div>
           </div>
         ))}
       </div>
