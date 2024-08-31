@@ -1,54 +1,53 @@
 .sidebar {
     display: flex;
     flex-direction: column;
-  }
-  
-  h2 {
-    margin-bottom: 20px;
-    color: #ff9800;
-  }
-  
-  ul {
-    list-style: none;
-  }
-  
-  .task {
-    cursor: pointer;
-    background-color: #262626;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-  
-  .task:hover {
-    background-color: #333;
-  }
-  
-  .sublist {
-    margin-top: 10px;
-  }
-  
-  .sublist-header {
-    margin-bottom: 10px;
-    color: #ff9800;
-  }
-  
-  .sublist-item {
-    cursor: pointer;
-    background-color: #1a1a1a;
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-  
-  .sublist-item:hover {
-    background-color: #333;
-  }
-  
-  hr {
-    border: 1px solid #333;
-    margin: 20px 0;
-  }
-  
+
+    h2 {
+        margin-bottom: 20px;
+        color: #ff9800; /* Accent color for headings */
+    }
+
+    ul {
+        list-style: none; /* Remove bullet points from list items */
+    }
+
+    .task {
+        cursor: pointer;
+        background-color: #262626;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #333; /* Change background color on hover */
+        }
+    }
+
+    .sublist {
+        margin-top: 10px;
+
+        .sublist-header {
+            margin-bottom: 10px;
+            color: #ff9800; /* Accent color for sublist headers */
+        }
+
+        .sublist-item {
+            cursor: pointer;
+            background-color: #1a1a1a;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: #333; /* Change background color on hover */
+            }
+        }
+    }
+
+    hr {
+        border: 1px solid #333;
+        margin: 20px 0;
+    }
+}
