@@ -88,6 +88,10 @@
                 color: #ff9800; /* Accent color for day titles */
             }
 
+            ul {
+                list-style: none; /* Remove bullet points from list items */
+            }
+
             .task {
                 background-color: #333;
                 padding: 10px;

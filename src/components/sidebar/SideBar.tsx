@@ -1,33 +1,79 @@
-import React from "react";
+import { Droppable, Draggable } from "@hello-pangea/dnd";
 import "./sidebar.css";
 
-const SideBar: React.FC = () => {
-    const tasks = ["Task 1", "Task 2", "Task 3", "Task 4"];
+// Define TasksType to match the one in App.tsx
+type TasksType = {
+    main: string[];
+    sub: string[];
+    [key: string]: string[];
+};
 
-    const sublistItems = ["Subtask 1", "Subtask 2", "Subtask 3"];
+interface SideBarProps {
+    tasks: TasksType;
+}
 
+const SideBar: React.FC<SideBarProps> = ({ tasks }) => {
     return (
         <div className="sidebar">
             <h2>Tasks</h2>
-            <ul>
-                {tasks.map((task, index) => (
-                    <li key={index} className="task">
-                        {task}
-                    </li>
-                ))}
-            </ul>
+            <Droppable droppableId="main">
+                {(provided) => (
+                    <ul {...provided.droppableProps} ref={provided.innerRef}>
+                        {tasks["main"].map((task, index) => (
+                            <Draggable
+                                key={`main-${task}`}
+                                draggableId={`main-${task}`}
+                                index={index}
+                            >
+                                {(provided) => (
+                                    <li
+                                        className="task"
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        ref={provided.innerRef}
+                                    >
+                                        {task}
+                                    </li>
+                                )}
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
+                    </ul>
+                )}
+            </Droppable>
 
             <hr />
 
             <div className="sublist">
                 <div className="sublist-header">Subtasks</div>
-                <ul>
-                    {sublistItems.map((item, index) => (
-                        <li key={index} className="sublist-item">
-                            {item}
-                        </li>
-                    ))}
-                </ul>
+                <Droppable droppableId="sub">
+                    {(provided) => (
+                        <ul
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                        >
+                            {tasks["sub"].map((task, index) => (
+                                <Draggable
+                                    key={`sub-${task}`}
+                                    draggableId={`sub-${task}`}
+                                    index={index}
+                                >
+                                    {(provided) => (
+                                        <li
+                                            className="task"
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}
+                                        >
+                                            {task}
+                                        </li>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
             </div>
         </div>
     );
