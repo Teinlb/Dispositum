@@ -106,18 +106,8 @@ const App: React.FC = () => {
             sourceArray.splice(sourceIndex, 0, removed);
         }
 
-        let removeItem: boolean = false;
-        if (
-            (sourceId != "sub" && destId == "sub") ||
-            (sourceId != "main" && destId == "main")
-        ) {
-            removeItem = true;
-        }
-
-        if (!removeItem) {
-            // Add the item to the destination array
-            destArray.splice(destIndex, 0, removed);
-        }
+        // Add the item to the destination array
+        destArray.splice(destIndex, 0, removed);
 
         // Update the tasks state
         setTasks({
