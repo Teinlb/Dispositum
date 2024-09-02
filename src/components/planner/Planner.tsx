@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import "./planner.css";
-
-// Define TasksType to match the one in App.tsx
-type TasksType = {
-    main: string[];
-    sub: string[];
-    [key: string]: string[];
-};
+import TasksType from "../../type";
 
 interface PlannerProps {
     tasks: TasksType;
@@ -64,8 +58,8 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                                 >
                                     {tasks[day]?.map((task, index) => (
                                         <Draggable
-                                            key={`${day}-${task}`}
-                                            draggableId={`${day}-${task}`}
+                                            key={`${day}-${index}`}
+                                            draggableId={`${day}-${index}`}
                                             index={index}
                                         >
                                             {(provided) => (

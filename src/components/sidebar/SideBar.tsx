@@ -1,12 +1,6 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import "./sidebar.css";
-
-// Define TasksType to match the one in App.tsx
-type TasksType = {
-    main: string[];
-    sub: string[];
-    [key: string]: string[];
-};
+import TasksType from "../../type";
 
 interface SideBarProps {
     tasks: TasksType;
@@ -21,8 +15,8 @@ const SideBar: React.FC<SideBarProps> = ({ tasks }) => {
                     <ul {...provided.droppableProps} ref={provided.innerRef}>
                         {tasks["main"].map((task, index) => (
                             <Draggable
-                                key={`main-${task}`}
-                                draggableId={`main-${task}`}
+                                key={`main-${index}`}
+                                draggableId={`main-${index}`}
                                 index={index}
                             >
                                 {(provided) => (
@@ -54,8 +48,8 @@ const SideBar: React.FC<SideBarProps> = ({ tasks }) => {
                         >
                             {tasks["sub"].map((task, index) => (
                                 <Draggable
-                                    key={`sub-${task}`}
-                                    draggableId={`sub-${task}`}
+                                    key={`sub-${index}`}
+                                    draggableId={`sub-${index}`}
                                     index={index}
                                 >
                                     {(provided) => (
