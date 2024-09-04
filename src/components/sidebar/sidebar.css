@@ -22,6 +22,16 @@
         &:hover {
             background-color: #333; /* Change background color on hover */
         }
+
+        &.add {
+            background-color: #414141;
+            opacity: .8;
+            text-align: center;
+            
+            &:hover {
+                background-color:rgb(110, 110, 110);
+            }
+        }
     }
 
     .sublist {

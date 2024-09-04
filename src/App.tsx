@@ -78,55 +78,77 @@ const App: React.FC = () => {
         });
     }
 
-    function handleOnDragEnd(result: DropResult) {
-        const { source, destination } = result;
-
-        // Check if the destination is valid
-        if (!destination) return;
-
-        // Destructure the droppableId and index from source and destination
-        const { droppableId: sourceId, index: sourceIndex } = source;
-        const { droppableId: destId, index: destIndex } = destination;
-
-        // If the item is dropped in the same place
-        if (sourceId === destId && sourceIndex === destIndex) return;
-
-        // Define source and destination array
-        const sourceArray = tasks[sourceId];
-        const destArray = tasks[destId];
-
-        // Ensure that sourceArray and destArray are defined
-        if (!sourceArray || !destArray) return;
-
-        // Remove the item from the source array
-        const [removed] = sourceArray.splice(sourceIndex, 1);
-
-        // If the item is from a sublist and not placed back in a sublist keep it in the original sublist
-        if (sourceId == "sub" && destId != "sub") {
-            sourceArray.splice(sourceIndex, 0, removed);
-        }
-
-        // Add the item to the destination array
-        destArray.splice(destIndex, 0, removed);
-
-        // Update the tasks state
-        setTasks({
-            ...tasks,
-            [sourceId]: sourceArray,
-            [destId]: destArray,
-        });
-
-        saveTasksToDataBase();
+    function addTask(loc: string) {
+      const newTask = prompt("Enter new task:");
+  
+      // Check if the user cancelled the prompt
+      if (newTask === null) {
+          return; // Exit the function without adding a task
+      }
+  
+      // If the user pressed Enter without typing anything, use "New Task"
+      tasks[loc].push(newTask || "New Task");
+      saveTasksToDataBase();
     }
 
+    function handleOnDragEnd(result: DropResult) {
+      const { source, destination } = result;
+
+      // Check if the destination is valid
+      if (!destination) return;
+
+      // Destructure the droppableId and index from source and destination
+      const { droppableId: sourceId, index: sourceIndex } = source;
+      const { droppableId: destId, index: destIndex } = destination;
+
+      // If the item is dropped in the same place
+      if (sourceId === destId && sourceIndex === destIndex) return;
+
+      // Define source and destination array
+      const sourceArray = tasks[sourceId];
+      const destArray = tasks[destId];
+
+      // Ensure that sourceArray is defined
+      if (!sourceArray) return;
+
+      // Handle the deletion of the task if dropped in the delete area
+      if (destId === "delete") {
+          // Remove the item from the source array
+          sourceArray.splice(sourceIndex, 1);
+      } else {
+          // Remove the item from the source array
+          const [removed] = sourceArray.splice(sourceIndex, 1);
+
+          // If the item is from a sublist and not placed back in a sublist keep it in the original sublist
+          if (sourceId === "sub") {
+              sourceArray.splice(sourceIndex, 0, removed); // Add back to source array
+          }
+
+          // Ensure destArray is defined before adding the item to it
+          if (destArray) {
+              destArray.splice(destIndex, 0, removed); // Add to destination array
+          }
+      }
+
+      // Update the tasks state
+      setTasks({
+          ...tasks,
+          [sourceId]: sourceArray,
+          ...(destId !== "delete" && { [destId]: destArray }),
+      });
+
+      saveTasksToDataBase();
+  }
+
+
     return (
-        <div className="app">
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-                <SideBar tasks={tasks} />
-                <Planner tasks={tasks} />
-            </DragDropContext>
-        </div>
-    );
+      <div className="app">
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+              <SideBar tasks={tasks} addTask={addTask} />
+              <Planner tasks={tasks} />
+          </DragDropContext>
+      </div>
+  );
 };
 
 export default App;

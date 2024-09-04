@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import "./planner.css";
 import TasksType from "../../type";
@@ -8,10 +7,6 @@ interface PlannerProps {
 }
 
 const Planner: React.FC<PlannerProps> = ({ tasks }) => {
-    const [currentWeek, setCurrentWeek] = useState<number>(35);
-    const nextWeek = () => setCurrentWeek(currentWeek + 1);
-    const previousWeek = () => setCurrentWeek(currentWeek - 1);
-
     const days = [
         "Monday",
         "Tuesday",
@@ -25,21 +20,7 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
     return (
         <div className="planning">
             <div className="header">
-                <div className="week-selector">
-                    <button
-                        onClick={previousWeek}
-                        className="material-symbols-outlined"
-                    >
-                        chevron_left
-                    </button>
-                    <h2>Week {currentWeek}</h2>
-                    <button
-                        onClick={nextWeek}
-                        className="material-symbols-outlined"
-                    >
-                        chevron_right
-                    </button>
-                </div>
+                <h2>Dispositum</h2>
                 <div className="account-settings">
                     <span>Username</span>
                     <button>&#128100;</button>
@@ -81,6 +62,17 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                     </div>
                 ))}
             </div>
+            <Droppable droppableId="delete">
+              {(provided) => (
+                <span
+                  className="material-symbols-outlined delete"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  delete
+                </span>
+              )}
+            </Droppable>
         </div>
     );
 };

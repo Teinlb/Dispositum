@@ -1,12 +1,12 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import "./sidebar.css";
-import TasksType from "../../type";
+import "./sidebar.css";import TasksType from "../../type";
 
 interface SideBarProps {
     tasks: TasksType;
+    addTask: (loc: string) => void; // Voeg deze regel toe
 }
 
-const SideBar: React.FC<SideBarProps> = ({ tasks }) => {
+const SideBar: React.FC<SideBarProps> = ({ tasks, addTask }) => {
     return (
         <div className="sidebar">
             <h2>Tasks</h2>
@@ -31,6 +31,9 @@ const SideBar: React.FC<SideBarProps> = ({ tasks }) => {
                                 )}
                             </Draggable>
                         ))}
+                        <li className="task add" onClick={() => addTask("main")}>
+                            +
+                        </li>
                         {provided.placeholder}
                     </ul>
                 )}
@@ -64,6 +67,9 @@ const SideBar: React.FC<SideBarProps> = ({ tasks }) => {
                                     )}
                                 </Draggable>
                             ))}
+                            <li className="task add" onClick={() => addTask("sub")}>
+                                +
+                            </li>
                             {provided.placeholder}
                         </ul>
                     )}
