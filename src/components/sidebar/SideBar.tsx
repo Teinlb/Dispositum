@@ -31,10 +31,10 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask }) => {
                                 )}
                             </Draggable>
                         ))}
+                        {provided.placeholder}
                         <li className="task add" onClick={() => addTask("main")}>
                             +
                         </li>
-                        {provided.placeholder}
                     </ul>
                 )}
             </Droppable>
@@ -67,10 +67,10 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask }) => {
                                     )}
                                 </Draggable>
                             ))}
+                            {provided.placeholder}
                             <li className="task add" onClick={() => addTask("sub")}>
                                 +
                             </li>
-                            {provided.placeholder}
                         </ul>
                     )}
                 </Droppable>

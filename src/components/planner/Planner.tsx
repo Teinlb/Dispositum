@@ -26,16 +26,18 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                     <button>&#128100;</button>
                 </div>
             </div>
-
             <div className="week-board">
                 {days.map((day) => (
                     <div key={day} className="week-column">
                         <h3>{day}</h3>
                         <Droppable droppableId={day}>
-                            {(provided) => (
+                            {(provided, snapshot) => (
                                 <ul
                                     {...provided.droppableProps}
                                     ref={provided.innerRef}
+                                    className={`task-list ${
+                                        snapshot.isDraggingOver ? "dragging-over" : ""
+                                    }`}
                                 >
                                     {tasks[day]?.map((task, index) => (
                                         <Draggable
@@ -43,9 +45,11 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                                             draggableId={`${day}-${index}`}
                                             index={index}
                                         >
-                                            {(provided) => (
+                                            {(provided, snapshot) => (
                                                 <li
-                                                    className="task"
+                                                    className={`task ${
+                                                        snapshot.isDragging ? "dragging" : ""
+                                                    }`}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                     ref={provided.innerRef}
@@ -63,11 +67,13 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                 ))}
             </div>
             <Droppable droppableId="delete">
-              {(provided) => (
+              {(provided, snapshot) => (
                 <span
-                  className="material-symbols-outlined delete"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className={`material-symbols-outlined delete ${
+                        snapshot.isDraggingOver ? "dragging-over" : ""
+                    }`}
                 >
                   delete
                 </span>

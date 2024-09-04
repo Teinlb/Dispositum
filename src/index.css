@@ -17,6 +17,7 @@
   background-color: #1a1a1a;
   padding: 20px;
   border-right: 1px solid #333;
+  overflow-y:auto;
 }
 
 .planning {
@@ -24,7 +25,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  overflow-y:auto;
 }
 
 .header {
