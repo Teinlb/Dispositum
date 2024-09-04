@@ -25,11 +25,11 @@
 
         &.add {
             background-color: #414141;
-            opacity: .8;
+            opacity: 0.8;
             text-align: center;
-            
+
             &:hover {
-                background-color:rgb(110, 110, 110);
+                background-color: rgb(110, 110, 110);
             }
         }
     }
@@ -58,6 +58,6 @@
 
     hr {
         border: 1px solid #333;
-        margin: 20px 0;
+        margin: 10px 0;
     }
 }

@@ -96,35 +96,27 @@ const App: React.FC = () => {
         if (!destination) return;
 
         // Destructure the droppableId and index from source and destination
-        const { droppableId: sourceId, index: sourceIndex } = source;
-        const { droppableId: destId, index: destIndex } = destination;
+        let { droppableId: sourceId, index: sourceIndex } = source;
+        let { droppableId: destId, index: destIndex } = destination;
 
         // If the item is dropped in the same place
         if (sourceId === destId && sourceIndex === destIndex) return;
 
         let subSource = false;
         let subDest = false;
+
         if (sourceId.startsWith("sub-")) {
             subSource = true;
-            sourceId.slice(4);
+            sourceId = sourceId.slice(4); // Remove "sub-" prefix
         }
         if (destId.startsWith("sub-")) {
             subDest = true;
-            destId.slice(4);
+            destId = destId.slice(4); // Remove "sub-" prefix
         }
 
         // Define source and destination array
-        let sourceArray, destArray;
-        if (subSource) {
-            sourceArray = tasks.sub[sourceId];
-        } else {
-            sourceArray = tasks[sourceId];
-        }
-        if (subDest) {
-            destArray = tasks.sub[destId];
-        } else {
-            destArray = tasks[destId];
-        }
+        let sourceArray = subSource ? tasks.sub[sourceId] : tasks[sourceId];
+        let destArray = subDest ? tasks.sub[destId] : tasks[destId];
 
         // Ensure that sourceArray is defined
         if (!sourceArray) return;
@@ -136,26 +128,29 @@ const App: React.FC = () => {
         } else {
             // Remove the item from the source array
             const [removed] = sourceArray.splice(sourceIndex, 1);
-
-            // If the item is from a sublist and not placed back in a sublist keep it in the original sublist
-            if (subSource) {
-                if (!subDest && destId !== "main") {
-                    sourceArray.splice(sourceIndex, 0, removed); // Add back to source array
-                }
-            }
-
+            console.log(sourceId, destId);
             // Ensure destArray is defined before adding the item to it
             if (destArray) {
-                destArray.splice(destIndex, 0, removed); // Add to destination array
+                destArray.splice(destIndex, 0, removed);
+            }
+
+            // If the item is from a sublist and not placed back in a sublist, keep it in the original sublist
+            if (subSource && !subDest && destId != "main") {
+                sourceArray.splice(sourceIndex, 0, removed);
+                console.log("test");
             }
         }
 
         // Update the tasks state
-        setTasks({
-            ...tasks,
-            [sourceId]: sourceArray,
-            ...(destId !== "delete" && { [destId]: destArray }),
-        });
+        setTasks((prevTasks) => ({
+            ...prevTasks,
+            ...(subSource
+                ? { sub: { ...prevTasks.sub, [sourceId]: sourceArray } }
+                : { [sourceId]: sourceArray }),
+            ...(subDest
+                ? { sub: { ...prevTasks.sub, [destId]: destArray } }
+                : { [destId]: destArray }),
+        }));
 
         saveTasksToDataBase();
     }
