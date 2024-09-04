@@ -28,7 +28,7 @@ const database = getDatabase(app);
 const App: React.FC = () => {
     const [tasks, setTasks] = useState<TasksType>({
         main: [],
-        sub: [],
+        sub: {},
         Monday: [],
         Tuesday: [],
         Wednesday: [],
@@ -45,8 +45,11 @@ const App: React.FC = () => {
             const data = snapshot.val();
             if (data) {
                 setTasks({
-                    main: data.main || [],
-                    sub: data.sub || [],
+                    main: data.main || ["Task 1"],
+                    sub: data.sub || {
+                        "List 1": ["Task 1", "Task 2"],
+                        "List 2": ["Task 1"],
+                    },
                     Monday: data.Monday || [],
                     Tuesday: data.Tuesday || [],
                     Wednesday: data.Wednesday || [],
@@ -65,31 +68,26 @@ const App: React.FC = () => {
 
     function saveTasksToDataBase() {
         const tasksRef = ref(database, "tasks");
-        set(tasksRef, {
-            main: tasks.main,
-            sub: tasks.sub,
-            Monday: tasks.Monday,
-            Tuesday: tasks.Tuesday,
-            Wednesday: tasks.Wednesday,
-            Thursday: tasks.Thursday,
-            Friday: tasks.Friday,
-            Saturday: tasks.Saturday,
-            Sunday: tasks.Sunday,
-        });
+        set(tasksRef, tasks);
     }
 
-    function addTask(loc: string) {
+    function addTask(loc: string, sub?: string) {
         const newTask = prompt("Enter new task:");
-    
+
         // Check if the user cancelled the prompt
         if (newTask === null) {
             return; // Exit the function without adding a task
         }
-    
+
         // If the user pressed Enter without typing anything, use "New Task"
-        tasks[loc].push(newTask || "New Task");
-        saveTasksToDataBase();
+        if (sub) {
+            tasks.sub[sub].push(newTask || "New Task");
+        } else {
+            tasks[loc].push(newTask || "New Task");
         }
+
+        saveTasksToDataBase();
+    }
 
     function handleOnDragEnd(result: DropResult) {
         const { source, destination } = result;
@@ -104,9 +102,29 @@ const App: React.FC = () => {
         // If the item is dropped in the same place
         if (sourceId === destId && sourceIndex === destIndex) return;
 
+        let subSource = false;
+        let subDest = false;
+        if (sourceId.startsWith("sub-")) {
+            subSource = true;
+            sourceId.slice(4);
+        }
+        if (destId.startsWith("sub-")) {
+            subDest = true;
+            destId.slice(4);
+        }
+
         // Define source and destination array
-        const sourceArray = tasks[sourceId];
-        const destArray = tasks[destId];
+        let sourceArray, destArray;
+        if (subSource) {
+            sourceArray = tasks.sub[sourceId];
+        } else {
+            sourceArray = tasks[sourceId];
+        }
+        if (subDest) {
+            destArray = tasks.sub[destId];
+        } else {
+            destArray = tasks[destId];
+        }
 
         // Ensure that sourceArray is defined
         if (!sourceArray) return;
@@ -120,8 +138,8 @@ const App: React.FC = () => {
             const [removed] = sourceArray.splice(sourceIndex, 1);
 
             // If the item is from a sublist and not placed back in a sublist keep it in the original sublist
-            if (sourceId === "sub") {
-                if (destId != "sub" && destId != "main") {
+            if (subSource) {
+                if (!subDest && destId !== "main") {
                     sourceArray.splice(sourceIndex, 0, removed); // Add back to source array
                 }
             }
@@ -130,18 +148,17 @@ const App: React.FC = () => {
             if (destArray) {
                 destArray.splice(destIndex, 0, removed); // Add to destination array
             }
-      }
+        }
 
-      // Update the tasks state
-      setTasks({
-          ...tasks,
-          [sourceId]: sourceArray,
-          ...(destId !== "delete" && { [destId]: destArray }),
-      });
+        // Update the tasks state
+        setTasks({
+            ...tasks,
+            [sourceId]: sourceArray,
+            ...(destId !== "delete" && { [destId]: destArray }),
+        });
 
-      saveTasksToDataBase();
+        saveTasksToDataBase();
     }
-
 
     return (
         <div className="app">

@@ -1,7 +1,7 @@
 type TasksType = {
     main: string[];
-    sub: string[];
-    [key: string]: string[]; // This allows for any string key with an array of strings as value
+    sub: { [key: string]: string[] }; // sub is altijd aanwezig en getypeerd
+    [key: string]: string[];
 };
 
 export default TasksType;

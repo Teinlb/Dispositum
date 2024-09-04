@@ -36,7 +36,9 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                                     {...provided.droppableProps}
                                     ref={provided.innerRef}
                                     className={`task-list ${
-                                        snapshot.isDraggingOver ? "dragging-over" : ""
+                                        snapshot.isDraggingOver
+                                            ? "dragging-over"
+                                            : ""
                                     }`}
                                 >
                                     {tasks[day]?.map((task, index) => (
@@ -48,7 +50,9 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                                             {(provided, snapshot) => (
                                                 <li
                                                     className={`task ${
-                                                        snapshot.isDragging ? "dragging" : ""
+                                                        snapshot.isDragging
+                                                            ? "dragging"
+                                                            : ""
                                                     }`}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
@@ -67,17 +71,17 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
                 ))}
             </div>
             <Droppable droppableId="delete">
-              {(provided, snapshot) => (
-                <span
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={`material-symbols-outlined delete ${
-                        snapshot.isDraggingOver ? "dragging-over" : ""
-                    }`}
-                >
-                  delete
-                </span>
-              )}
+                {(provided, snapshot) => (
+                    <span
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className={`material-symbols-outlined delete ${
+                            snapshot.isDraggingOver ? "dragging-over" : ""
+                        }`}
+                    >
+                        delete
+                    </span>
+                )}
             </Droppable>
         </div>
     );
