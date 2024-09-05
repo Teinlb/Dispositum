@@ -7,12 +7,27 @@ import Planner from "./components/planner/Planner";
 import TasksType from "./type";
 
 import { auth, database } from "./firebaseConfig";
-import { signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ref, set, onValue } from "firebase/database";
+import LogIn from "./components/login/LogIn";
 
 const provider = new GoogleAuthProvider();
 
 const App: React.FC = () => {
+    const [user, setUser] = useState<any>(null);
+
+    function signIn() {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const loggedInUser = result.user;
+                setUser(loggedInUser);
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+        });
+    }
+
     const [tasks, setTasks] = useState<TasksType>({
         main: [],
         sub: {},
@@ -190,10 +205,14 @@ const App: React.FC = () => {
 
     return (
         <div className="app">
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-                <SideBar tasks={tasks} addTask={addTask} addList={addList} removeList={removeList}/>
-                <Planner tasks={tasks} />
-            </DragDropContext>
+            {user ? (
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                    <SideBar tasks={tasks} addTask={addTask} addList={addList} removeList={removeList}/>
+                    <Planner tasks={tasks} userName={user.displayName}/>
+                </DragDropContext>
+            ) : (
+                <LogIn signIn={signIn} />
+            )}
         </div>
     );
 };

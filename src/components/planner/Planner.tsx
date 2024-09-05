@@ -4,9 +4,10 @@ import TasksType from "../../type";
 
 interface PlannerProps {
     tasks: TasksType;
+    userName: string;
 }
 
-const Planner: React.FC<PlannerProps> = ({ tasks }) => {
+const Planner: React.FC<PlannerProps> = ({ tasks, userName }) => {
     const days = [
         "Monday",
         "Tuesday",
@@ -22,8 +23,8 @@ const Planner: React.FC<PlannerProps> = ({ tasks }) => {
             <div className="header">
                 <h2>Dispositum</h2>
                 <div className="account-settings">
-                    <span>Username</span>
-                    <button>&#128100;</button>
+                    <span>{userName}</span>
+                    <button >&#128100;</button>
                 </div>
             </div>
             <div className="week-board">

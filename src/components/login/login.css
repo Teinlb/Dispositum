@@ -1,0 +1,38 @@
+h1 {
+    color: #ff9800; /* Accent color for week title */
+    margin-bottom: 5px;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.login {
+    background-color: #ff9800; /* Gele accentkleur */
+    color: black;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.5rem;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover- en klik-effecten */
+.login:hover {
+    background-color: #e68900;
+    transform: translateY(-2px);
+}
+
+.login:active {
+    background-color: #cc7a00;
+    transform: translateY(0);
+}

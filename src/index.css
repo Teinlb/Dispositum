@@ -12,6 +12,12 @@
   color: #f0f0f0;
 }
 
+.loginComp {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
 .sidebar {
   width: 260px;
   background-color: #1a1a1a;
