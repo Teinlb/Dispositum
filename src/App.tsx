@@ -73,21 +73,49 @@ const App: React.FC = () => {
 
     function addTask(loc: string, sub?: string) {
         const newTask = prompt("Enter new task:");
-
-        // Check if the user cancelled the prompt
+    
         if (newTask === null) {
             return; // Exit the function without adding a task
         }
-
-        // If the user pressed Enter without typing anything, use "New Task"
+    
+        // Create a copy of the tasks object
+        const updatedTasks = { ...tasks };
+    
         if (sub) {
-            tasks.sub[sub].push(newTask || "New Task");
+            // Ensure the sublist exists before pushing
+            if (!updatedTasks.sub[sub]) {
+                updatedTasks.sub[sub] = [];
+            }
+            updatedTasks.sub[sub].push(newTask || "New Task");
         } else {
-            tasks[loc].push(newTask || "New Task");
+            updatedTasks[loc].push(newTask || "New Task");
         }
-
+    
+        // Update the tasks state
+        setTasks(updatedTasks);
+    
         saveTasksToDataBase();
     }
+    
+    function addList() {
+        const newList = prompt("Enter new list:");
+    
+        if (newList === null) {
+            return; // Exit the function without adding a list
+        }
+    
+        // Create a copy of the tasks object
+        const updatedTasks = { ...tasks };
+    
+        // Add the new list as a key with an empty array in the sub object
+        updatedTasks.sub[newList || "New List"] = [];
+    
+        // Update the tasks state
+        setTasks(updatedTasks);
+    
+        saveTasksToDataBase();
+    }
+    
 
     function handleOnDragEnd(result: DropResult) {
         const { source, destination } = result;
@@ -158,7 +186,7 @@ const App: React.FC = () => {
     return (
         <div className="app">
             <DragDropContext onDragEnd={handleOnDragEnd}>
-                <SideBar tasks={tasks} addTask={addTask} />
+                <SideBar tasks={tasks} addTask={addTask} addList={addList}/>
                 <Planner tasks={tasks} />
             </DragDropContext>
         </div>
