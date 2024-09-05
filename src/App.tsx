@@ -115,6 +115,25 @@ const App: React.FC = () => {
     
         saveTasksToDataBase();
     }
+
+    function removeList(list: string) {
+        // Create a copy of the tasks object
+        const updatedTasks = { ...tasks };
+    
+        // Check if the list exists before attempting to remove it
+        if (updatedTasks.sub[list]) {
+            // Remove the list from the sub object
+            delete updatedTasks.sub[list];
+    
+            // Update the tasks state
+            setTasks(updatedTasks);
+    
+            // Save the updated tasks to the database
+            saveTasksToDataBase();
+        } else {
+            return;
+        }
+    }
     
 
     function handleOnDragEnd(result: DropResult) {
@@ -156,7 +175,7 @@ const App: React.FC = () => {
         } else {
             // Remove the item from the source array
             const [removed] = sourceArray.splice(sourceIndex, 1);
-            console.log(sourceId, destId);
+
             // Ensure destArray is defined before adding the item to it
             if (destArray) {
                 destArray.splice(destIndex, 0, removed);
@@ -165,7 +184,6 @@ const App: React.FC = () => {
             // If the item is from a sublist and not placed back in a sublist, keep it in the original sublist
             if (subSource && !subDest && destId != "main") {
                 sourceArray.splice(sourceIndex, 0, removed);
-                console.log("test");
             }
         }
 
@@ -186,7 +204,7 @@ const App: React.FC = () => {
     return (
         <div className="app">
             <DragDropContext onDragEnd={handleOnDragEnd}>
-                <SideBar tasks={tasks} addTask={addTask} addList={addList}/>
+                <SideBar tasks={tasks} addTask={addTask} addList={addList} removeList={removeList}/>
                 <Planner tasks={tasks} />
             </DragDropContext>
         </div>

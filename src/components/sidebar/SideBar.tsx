@@ -5,10 +5,11 @@ import TasksType from "../../type";
 interface SideBarProps {
     tasks: TasksType;
     addTask: (loc: string, sub?: string) => void;
-    addList: void;
+    addList: () => void;
+    removeList: (list: string) => void;
 }
 
-const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList }) => {
+const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList, removeList }) => {
     return (
         <div className="sidebar">
             <h2>Tasks</h2>
@@ -48,7 +49,10 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList }) => {
 
             {Object.keys(tasks.sub).map((list) => (
                 <div className="sublist" key={list}>
-                    <div className="sublist-header">{list}</div>
+                    <div className="sublist-header">
+                        <h3>{list}</h3>
+                        <span className="material-symbols-outlined removeList" onClick={() => removeList(list)}>close</span>
+                    </div>
                     <Droppable droppableId={`sub-${list}`}>
                         {(provided) => (
                             <ul

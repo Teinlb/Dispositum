@@ -40,6 +40,17 @@
         .sublist-header {
             margin-bottom: 10px;
             color: #ff9800; /* Accent color for sublist headers */
+            display: flex;
+            justify-content: space-between;
+
+            .removeList {
+                opacity: 0;
+                cursor:pointer;
+            }
+
+            &:hover .removeList {
+                opacity: .3;
+            }
         }
     }
 
