@@ -10,23 +10,32 @@ import { auth, database } from "./firebaseConfig";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ref, set, onValue } from "firebase/database";
 import LogIn from "./components/login/LogIn";
+import AccountMenu from "./components/accountmenu/AccountMenu";
 
 const provider = new GoogleAuthProvider();
 
 const App: React.FC = () => {
     const [user, setUser] = useState<any>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     function signIn() {
         signInWithPopup(auth, provider)
             .then((result) => {
-                const credential = GoogleAuthProvider.credentialFromResult(result);
                 const loggedInUser = result.user;
                 setUser(loggedInUser);
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-        });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
+
+    function signOut() {
+        console.log("test");
+    }
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     const [tasks, setTasks] = useState<TasksType>({
         main: [],
@@ -75,14 +84,14 @@ const App: React.FC = () => {
 
     function addTask(loc: string, sub?: string) {
         const newTask = prompt("Enter new task:");
-    
+
         if (newTask === null) {
             return; // Exit the function without adding a task
         }
-    
+
         // Create a copy of the tasks object
         const updatedTasks = { ...tasks };
-    
+
         if (sub) {
             // Ensure the sublist exists before pushing
             if (!updatedTasks.sub[sub]) {
@@ -92,51 +101,50 @@ const App: React.FC = () => {
         } else {
             updatedTasks[loc].push(newTask || "New Task");
         }
-    
+
         // Update the tasks state
         setTasks(updatedTasks);
-    
+
         saveTasksToDataBase();
     }
-    
+
     function addList() {
         const newList = prompt("Enter new list:");
-    
+
         if (newList === null) {
             return; // Exit the function without adding a list
         }
-    
+
         // Create a copy of the tasks object
         const updatedTasks = { ...tasks };
-    
+
         // Add the new list as a key with an empty array in the sub object
         updatedTasks.sub[newList || "New List"] = [];
-    
+
         // Update the tasks state
         setTasks(updatedTasks);
-    
+
         saveTasksToDataBase();
     }
 
     function removeList(list: string) {
         // Create a copy of the tasks object
         const updatedTasks = { ...tasks };
-    
+
         // Check if the list exists before attempting to remove it
         if (updatedTasks.sub[list]) {
             // Remove the list from the sub object
             delete updatedTasks.sub[list];
-    
+
             // Update the tasks state
             setTasks(updatedTasks);
-    
+
             // Save the updated tasks to the database
             saveTasksToDataBase();
         } else {
             return;
         }
     }
-    
 
     function handleOnDragEnd(result: DropResult) {
         const { source, destination } = result;
@@ -207,8 +215,24 @@ const App: React.FC = () => {
         <div className="app">
             {user ? (
                 <DragDropContext onDragEnd={handleOnDragEnd}>
-                    <SideBar tasks={tasks} addTask={addTask} addList={addList} removeList={removeList}/>
-                    <Planner tasks={tasks} userName={user.displayName}/>
+                    <SideBar
+                        tasks={tasks}
+                        addTask={addTask}
+                        addList={addList}
+                        removeList={removeList}
+                    />
+                    <Planner
+                        tasks={tasks}
+                        userName={user.displayName}
+                        toggleMenu={toggleMenu}
+                    />
+                    {isMenuOpen ? (
+                        <AccountMenu
+                            username={user.displayName}
+                            mail={user.email}
+                            signOut={signOut}
+                        />
+                    ) : null}
                 </DragDropContext>
             ) : (
                 <LogIn signIn={signIn} />

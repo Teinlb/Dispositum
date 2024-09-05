@@ -5,9 +5,10 @@ import TasksType from "../../type";
 interface PlannerProps {
     tasks: TasksType;
     userName: string;
+    toggleMenu: () => void;
 }
 
-const Planner: React.FC<PlannerProps> = ({ tasks, userName }) => {
+const Planner: React.FC<PlannerProps> = ({ tasks, userName, toggleMenu }) => {
     const days = [
         "Monday",
         "Tuesday",
@@ -24,7 +25,7 @@ const Planner: React.FC<PlannerProps> = ({ tasks, userName }) => {
                 <h2>Dispositum</h2>
                 <div className="account-settings">
                     <span>{userName}</span>
-                    <button >&#128100;</button>
+                    <button onClick={toggleMenu}>&#128100;</button>
                 </div>
             </div>
             <div className="week-board">
