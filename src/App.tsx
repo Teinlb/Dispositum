@@ -7,7 +7,7 @@ import Planner from "./components/planner/Planner";
 import TasksType from "./type";
 
 import { auth, database } from "./firebaseConfig";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { ref, set, onValue } from "firebase/database";
 import LogIn from "./components/login/LogIn";
 import AccountMenu from "./components/accountmenu/AccountMenu";
@@ -29,8 +29,15 @@ const App: React.FC = () => {
             });
     }
 
-    function signOut() {
-        console.log("test");
+    function logOut() {
+        signOut(auth)
+            .then(() => {
+                setUser(null);
+                console.log("logged out succesful");
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     const toggleMenu = () => {
@@ -51,7 +58,8 @@ const App: React.FC = () => {
 
     // Function to fetch tasks from Firebase
     function fetchTasksFromDatabase() {
-        const tasksRef = ref(database, "tasks");
+        const tasksPath = "usrs/" + user.uid + "/tasks";
+        const tasksRef = ref(database, tasksPath);
         onValue(tasksRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -74,11 +82,14 @@ const App: React.FC = () => {
     }
 
     useEffect(() => {
-        fetchTasksFromDatabase();
-    }, []);
+        if (user) {
+            fetchTasksFromDatabase();
+        }
+    }, [user]);
 
     function saveTasksToDataBase() {
-        const tasksRef = ref(database, "tasks");
+        const tasksPath = "usrs/" + user.uid + "/tasks";
+        const tasksRef = ref(database, tasksPath);
         set(tasksRef, tasks);
     }
 
@@ -230,7 +241,8 @@ const App: React.FC = () => {
                         <AccountMenu
                             username={user.displayName}
                             mail={user.email}
-                            signOut={signOut}
+                            signOut={logOut}
+                            toggleMenu={toggleMenu}
                         />
                     ) : null}
                 </DragDropContext>

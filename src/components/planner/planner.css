@@ -136,7 +136,7 @@
         margin: 20px auto;
         border: 1px solid #333;
         background-color: #1a1a1a;
-        font-size: 5vh;
+        font-size: 4vh;
         line-height: 1; /* Verzeker dat de tekst niet uitrekt */
 
         /* Zorg ervoor dat de knop gecentreerd blijft binnen flex- of grid-containers */
