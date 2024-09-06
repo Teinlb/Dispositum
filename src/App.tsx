@@ -14,6 +14,18 @@ import AccountMenu from "./components/accountmenu/AccountMenu";
 
 const provider = new GoogleAuthProvider();
 
+const emptyTasks = {
+    main: [],
+    sub: {},
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: [],
+}
+
 const App: React.FC = () => {
     const [user, setUser] = useState<any>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,6 +45,7 @@ const App: React.FC = () => {
         signOut(auth)
             .then(() => {
                 setUser(null);
+                setTasks(emptyTasks);
                 console.log("logged out succesful");
             })
             .catch((error) => {
@@ -44,17 +57,7 @@ const App: React.FC = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const [tasks, setTasks] = useState<TasksType>({
-        main: [],
-        sub: {},
-        Monday: [],
-        Tuesday: [],
-        Wednesday: [],
-        Thursday: [],
-        Friday: [],
-        Saturday: [],
-        Sunday: [],
-    });
+    const [tasks, setTasks] = useState<TasksType>(emptyTasks);
 
     // Function to fetch tasks from Firebase
     function fetchTasksFromDatabase() {
