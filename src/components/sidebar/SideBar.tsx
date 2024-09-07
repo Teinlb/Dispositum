@@ -4,12 +4,17 @@ import TasksType from "../../type";
 
 interface SideBarProps {
     tasks: TasksType;
-    addTask: (loc: string, sub?: string) => void;
+    addTask: (sub?: string) => void;
     addList: () => void;
     removeList: (list: string) => void;
 }
 
-const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList, removeList }) => {
+const SideBar: React.FC<SideBarProps> = ({
+    tasks,
+    addTask,
+    addList,
+    removeList,
+}) => {
     return (
         <div className="sidebar">
             <h2>Tasks</h2>
@@ -35,10 +40,7 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList, removeList }
                             </Draggable>
                         ))}
                         {provided.placeholder}
-                        <li
-                            className="task add"
-                            onClick={() => addTask("main")}
-                        >
+                        <li className="task add" onClick={() => addTask("")}>
                             +
                         </li>
                     </ul>
@@ -51,7 +53,12 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList, removeList }
                 <div className="sublist" key={list}>
                     <div className="sublist-header">
                         <h3>{list}</h3>
-                        <span className="material-symbols-outlined removeList" onClick={() => removeList(list)}>close</span>
+                        <span
+                            className="material-symbols-outlined removeList"
+                            onClick={() => removeList(list)}
+                        >
+                            close
+                        </span>
                     </div>
                     <Droppable droppableId={`sub-${list}`}>
                         {(provided) => (
@@ -82,7 +89,7 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList, removeList }
                                 {provided.placeholder}
                                 <li
                                     className="task add"
-                                    onClick={() => addTask("sub", list)}
+                                    onClick={() => addTask(list)}
                                 >
                                     +
                                 </li>
@@ -94,7 +101,9 @@ const SideBar: React.FC<SideBarProps> = ({ tasks, addTask, addList, removeList }
 
             <hr />
 
-            <div className="task addList" onClick={addList}>Add List</div>
+            <div className="task addList" onClick={addList}>
+                Add List
+            </div>
         </div>
     );
 };

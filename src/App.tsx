@@ -8,7 +8,7 @@ import TasksType from "./type";
 
 import { auth, database } from "./firebaseConfig";
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { ref, set, onValue } from "firebase/database";
+import { ref, update, onValue } from "firebase/database";
 import LogIn from "./components/login/LogIn";
 import AccountMenu from "./components/accountmenu/AccountMenu";
 
@@ -24,7 +24,7 @@ const emptyTasks = {
     Friday: [],
     Saturday: [],
     Sunday: [],
-}
+};
 
 const App: React.FC = () => {
     const [user, setUser] = useState<any>(null);
@@ -67,11 +67,8 @@ const App: React.FC = () => {
             const data = snapshot.val();
             if (data) {
                 setTasks({
-                    main: data.main || ["Task 1"],
-                    sub: data.sub || {
-                        "List 1": ["Task 1", "Task 2"],
-                        "List 2": ["Task 1"],
-                    },
+                    main: data.main || [],
+                    sub: data.sub || {},
                     Monday: data.Monday || [],
                     Tuesday: data.Tuesday || [],
                     Wednesday: data.Wednesday || [],
@@ -90,13 +87,21 @@ const App: React.FC = () => {
         }
     }, [user]);
 
-    function saveTasksToDataBase() {
-        const tasksPath = "usrs/" + user.uid + "/tasks";
-        const tasksRef = ref(database, tasksPath);
-        set(tasksRef, tasks);
+    function saveTasksToDataBase(updatedSections: { [key: string]: any }) {
+        const path = "usrs/" + user.uid + "/tasks";
+        const pathRef = ref(database, path);
+
+        // Gebruik update om specifieke secties in tasks en sub bij te werken
+        update(pathRef, updatedSections)
+            .then(() => {
+                console.log("Tasks updated successfully!");
+            })
+            .catch((error) => {
+                console.error("Error updating tasks:", error);
+            });
     }
 
-    function addTask(loc: string, sub?: string) {
+    function addTask(sub?: string) {
         const newTask = prompt("Enter new task:");
 
         if (newTask === null) {
@@ -112,14 +117,21 @@ const App: React.FC = () => {
                 updatedTasks.sub[sub] = [];
             }
             updatedTasks.sub[sub].push(newTask || "New Task");
+
+            // Update the tasks state
+            setTasks(updatedTasks);
+
+            // Only save the updated sublist to the database
+            saveTasksToDataBase({ [`sub/${sub}`]: updatedTasks.sub[sub] });
         } else {
-            updatedTasks[loc].push(newTask || "New Task");
+            updatedTasks.main.push(newTask || "New Task");
+
+            // Update the tasks state
+            setTasks(updatedTasks);
+
+            // Only save the updated main list to the database
+            saveTasksToDataBase({ main: updatedTasks.main });
         }
-
-        // Update the tasks state
-        setTasks(updatedTasks);
-
-        saveTasksToDataBase();
     }
 
     function addList() {
@@ -138,7 +150,8 @@ const App: React.FC = () => {
         // Update the tasks state
         setTasks(updatedTasks);
 
-        saveTasksToDataBase();
+        // Save only the updated sublist to the database
+        saveTasksToDataBase({ [`sub/${newList}`]: [] });
     }
 
     function removeList(list: string) {
@@ -153,8 +166,8 @@ const App: React.FC = () => {
             // Update the tasks state
             setTasks(updatedTasks);
 
-            // Save the updated tasks to the database
-            saveTasksToDataBase();
+            // Remove the list from the database
+            saveTasksToDataBase({ [`sub/${list}`]: null }); // null to delete the list
         } else {
             return;
         }
@@ -185,44 +198,67 @@ const App: React.FC = () => {
             destId = destId.slice(4); // Remove "sub-" prefix
         }
 
-        // Define source and destination array
+        // Define source array
         let sourceArray = subSource ? tasks.sub[sourceId] : tasks[sourceId];
-        let destArray = subDest ? tasks.sub[destId] : tasks[destId];
 
         // Ensure that sourceArray is defined
         if (!sourceArray) return;
 
-        // Handle the deletion of the task if dropped in the delete area
+        let updates = {};
+
         if (destId === "delete") {
-            // Remove the item from the source array
+            // Remove the task from the source array
             sourceArray.splice(sourceIndex, 1);
+
+            // Update the tasks state
+            setTasks((prevTasks) => ({
+                ...prevTasks,
+                ...(subSource
+                    ? { sub: { ...prevTasks.sub, [sourceId]: sourceArray } }
+                    : { [sourceId]: sourceArray }),
+            }));
+
+            // Prepare the update to remove the task from Firebase
+            updates = subSource
+                ? { [`sub/${sourceId}`]: sourceArray }
+                : { [sourceId]: sourceArray };
         } else {
-            // Remove the item from the source array
-            const [removed] = sourceArray.splice(sourceIndex, 1);
+            // Define destination array
+            let destArray = subDest ? tasks.sub[destId] : tasks[destId];
 
             // Ensure destArray is defined before adding the item to it
             if (destArray) {
-                destArray.splice(destIndex, 0, removed);
-            }
+                // Remove the item from the source array
+                const [removed] = sourceArray.splice(sourceIndex, 1);
 
-            // If the item is from a sublist and not placed back in a sublist, keep it in the original sublist
-            if (subSource && !subDest && destId != "main") {
-                sourceArray.splice(sourceIndex, 0, removed);
+                // Add the item to the destination array
+                destArray.splice(destIndex, 0, removed);
+
+                // Update the tasks state
+                setTasks((prevTasks) => ({
+                    ...prevTasks,
+                    ...(subSource
+                        ? { sub: { ...prevTasks.sub, [sourceId]: sourceArray } }
+                        : { [sourceId]: sourceArray }),
+                    ...(subDest
+                        ? { sub: { ...prevTasks.sub, [destId]: destArray } }
+                        : { [destId]: destArray }),
+                }));
+
+                // Prepare updates for both source and destination in Firebase
+                updates = {
+                    ...(subSource
+                        ? { [`sub/${sourceId}`]: sourceArray }
+                        : { [sourceId]: sourceArray }),
+                    ...(subDest
+                        ? { [`sub/${destId}`]: destArray }
+                        : { [destId]: destArray }),
+                };
             }
         }
 
-        // Update the tasks state
-        setTasks((prevTasks) => ({
-            ...prevTasks,
-            ...(subSource
-                ? { sub: { ...prevTasks.sub, [sourceId]: sourceArray } }
-                : { [sourceId]: sourceArray }),
-            ...(subDest
-                ? { sub: { ...prevTasks.sub, [destId]: destArray } }
-                : { [destId]: destArray }),
-        }));
-
-        saveTasksToDataBase();
+        // Save the updated source and destination (or delete) to the database
+        saveTasksToDataBase(updates);
     }
 
     return (
@@ -256,5 +292,4 @@ const App: React.FC = () => {
     );
 };
 
-// Export
 export default App;
