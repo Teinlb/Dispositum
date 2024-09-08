@@ -1,35 +1,37 @@
 .sidebar {
     display: flex;
     flex-direction: column;
+    background-color: #000000; /* Donkere achtergrond voor teletekst-look */
 
     h2 {
         margin-bottom: 20px;
-        color: #ff9800; /* Accent color for headings */
+        color: #ff9800; /* Accentkleur */
     }
 
     ul {
-        list-style: none; /* Remove bullet points from list items */
+        list-style: none; /* Geen opsommingstekens */
     }
 
     .task {
         cursor: pointer;
-        background-color: #262626;
-        padding: 10px;
+        background-color: #0d0d0d; /* Donkerder kleur voor taken */
+        padding: 8px;
         margin-bottom: 10px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
+        border-radius: 2px;
+        transition: background-color 0.3s, border-color 0.3s;
+        border: 1px solid #333;
 
         &:hover {
-            background-color: #333; /* Change background color on hover */
+            background-color: #333; /* Highlight bij hover */
         }
 
         &.add {
-            background-color: #414141;
+            background-color: #1a1a1a;
             opacity: 0.8;
             text-align: center;
 
             &:hover {
-                background-color: rgb(110, 110, 110);
+                background-color: #333; /* Consistent hover effect */
             }
         }
     }
@@ -39,17 +41,17 @@
 
         .sublist-header {
             margin-bottom: 10px;
-            color: #ff9800; /* Accent color for sublist headers */
+            color: #ff9800;
             display: flex;
             justify-content: space-between;
 
             .removeList {
                 opacity: 0;
-                cursor:pointer;
+                cursor: pointer;
             }
 
             &:hover .removeList {
-                opacity: .3;
+                opacity: 0.3;
             }
         }
     }
@@ -60,13 +62,14 @@
     }
 
     .addList {
-        background-color: #303030;
-        opacity: .5;
-        text-align:center;
-        transition: transform .2s;
+        background-color: #1a1a1a;
+        opacity: 0.7;
+        text-align: center;
+        transition: transform 0.2s;
 
-        &:hover{
-            transform:  scale(.95)
+        &:hover {
+            transform: scale(0.95);
+            background-color: #333; /* Donkere hover achtergrond */
         }
     }
 }
