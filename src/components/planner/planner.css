@@ -79,6 +79,7 @@
                 padding-top: 5px;
                 height: auto;
                 min-height: 25%;
+                overflow-y: auto;
 
                 &.dragging-over {
                     background-color: #555555; /* Donkere highlight bij drag */
@@ -93,6 +94,7 @@
                 border-radius: 2px;
                 transition: background-color 0.3s;
                 border: 1px solid #333;
+                word-wrap: break-word; /* Tekst laten afbreken */
 
                 &:hover {
                     background-color: #444;

@@ -29,6 +29,7 @@ const emptyTasks = {
 const App: React.FC = () => {
     const [user, setUser] = useState<any>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false); // State for sidebar collapse
 
     function signIn() {
         signInWithPopup(auth, provider)
@@ -55,6 +56,10 @@ const App: React.FC = () => {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    const toggleSidebar = () => {
+        setIsSidebarCollapsed(!isSidebarCollapsed); // Function to toggle sidebar collapse
     };
 
     const [tasks, setTasks] = useState<TasksType>(emptyTasks);
@@ -175,20 +180,20 @@ const App: React.FC = () => {
 
     function handleOnDragEnd(result: DropResult) {
         const { source, destination } = result;
-
+    
         // Check if the destination is valid
         if (!destination) return;
-
+    
         // Destructure the droppableId and index from source and destination
         let { droppableId: sourceId, index: sourceIndex } = source;
         let { droppableId: destId, index: destIndex } = destination;
-
+    
         // If the item is dropped in the same place
         if (sourceId === destId && sourceIndex === destIndex) return;
-
+    
         let subSource = false;
         let subDest = false;
-
+    
         if (sourceId.startsWith("sub-")) {
             subSource = true;
             sourceId = sourceId.slice(4); // Remove "sub-" prefix
@@ -197,19 +202,19 @@ const App: React.FC = () => {
             subDest = true;
             destId = destId.slice(4); // Remove "sub-" prefix
         }
-
+    
         // Define source array
         let sourceArray = subSource ? tasks.sub[sourceId] : tasks[sourceId];
-
+    
         // Ensure that sourceArray is defined
         if (!sourceArray) return;
-
+    
         let updates = {};
-
+    
         if (destId === "delete") {
             // Remove the task from the source array
             sourceArray.splice(sourceIndex, 1);
-
+    
             // Update the tasks state
             setTasks((prevTasks) => ({
                 ...prevTasks,
@@ -217,7 +222,7 @@ const App: React.FC = () => {
                     ? { sub: { ...prevTasks.sub, [sourceId]: sourceArray } }
                     : { [sourceId]: sourceArray }),
             }));
-
+    
             // Prepare the update to remove the task from Firebase
             updates = subSource
                 ? { [`sub/${sourceId}`]: sourceArray }
@@ -225,15 +230,20 @@ const App: React.FC = () => {
         } else {
             // Define destination array
             let destArray = subDest ? tasks.sub[destId] : tasks[destId];
-
+    
             // Ensure destArray is defined before adding the item to it
             if (destArray) {
-                // Remove the item from the source array
-                const [removed] = sourceArray.splice(sourceIndex, 1);
-
-                // Add the item to the destination array
-                destArray.splice(destIndex, 0, removed);
-
+                const removed = sourceArray[sourceIndex]; // Don't remove from source yet
+    
+                // Add a copy of the item to the destination array if moving out of "main"
+                if (sourceId === "main" && destId !== "main") {
+                    destArray.splice(destIndex, 0, { ...removed });
+                } else {
+                    // Move the item to the destination array (normal drag)
+                    sourceArray.splice(sourceIndex, 1);
+                    destArray.splice(destIndex, 0, removed);
+                }
+    
                 // Update the tasks state
                 setTasks((prevTasks) => ({
                     ...prevTasks,
@@ -244,7 +254,7 @@ const App: React.FC = () => {
                         ? { sub: { ...prevTasks.sub, [destId]: destArray } }
                         : { [destId]: destArray }),
                 }));
-
+    
                 // Prepare updates for both source and destination in Firebase
                 updates = {
                     ...(subSource
@@ -256,11 +266,12 @@ const App: React.FC = () => {
                 };
             }
         }
-
+    
         // Save the updated source and destination (or delete) to the database
         saveTasksToDataBase(updates);
     }
-
+    
+        
     return (
         <div className="app">
             {user ? (
@@ -270,6 +281,9 @@ const App: React.FC = () => {
                         addTask={addTask}
                         addList={addList}
                         removeList={removeList}
+                        isCollapsed={isSidebarCollapsed}
+                        toggleSidebar={toggleSidebar}
+                        isSidebarCollapsed={isSidebarCollapsed}
                     />
                     <Planner
                         tasks={tasks}

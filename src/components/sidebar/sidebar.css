@@ -2,19 +2,49 @@
     display: flex;
     flex-direction: column;
     background-color: #000000; /* Donkere achtergrond voor teletekst-look */
+    transition: width 0.5s; /* Smooth transition */
+
+    .toggle-sidebar-btn {
+        position: fixed;
+        bottom: 25px;
+        left: 260px;
+        z-index: 10;
+        background-color: #333;
+        border: none;
+        padding: 10px;
+        opacity: .7;
+        color: #f0f0f0;
+        cursor: pointer;
+        border-radius: 0 5px 5px 0;
+        transition: transform 0.5s;
+    
+        &:hover {
+            background-color: #555;
+        }
+    }
+    
+    &.collapsed {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+
+        .toggle-sidebar-btn {
+            transform: translateX(-260px);
+        }        
+    }
 
     h2 {
         margin-bottom: 20px;
-        color: #ff9800; /* Accentkleur */
+        color: #ff9800;
     }
 
     ul {
-        list-style: none; /* Geen opsommingstekens */
+        list-style: none;
     }
 
     .task {
         cursor: pointer;
-        background-color: #0d0d0d; /* Donkerder kleur voor taken */
+        background-color: #0d0d0d;
         padding: 8px;
         margin-bottom: 10px;
         border-radius: 2px;
@@ -22,7 +52,7 @@
         border: 1px solid #333;
 
         &:hover {
-            background-color: #333; /* Highlight bij hover */
+            background-color: #333;
         }
 
         &.add {
@@ -31,7 +61,7 @@
             text-align: center;
 
             &:hover {
-                background-color: #333; /* Consistent hover effect */
+                background-color: #333;
             }
         }
     }
@@ -69,7 +99,9 @@
 
         &:hover {
             transform: scale(0.95);
-            background-color: #333; /* Donkere hover achtergrond */
+            background-color: #333;
         }
     }
 }
+
+
